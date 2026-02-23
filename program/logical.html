@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logical Operators using Switch Case</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+        }
+
+        .container {
+            background: #ffffff;
+            width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn {
+            background-color: #4e73df;
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #2e59d9;
+            transform: scale(1.05);
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fc;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Logical Operators Implementation</h2>
+
+    <button class="btn" onclick="performOperation(1)">AND (&&)</button>
+    <button class="btn" onclick="performOperation(2)">OR (||)</button>
+    <button class="btn" onclick="performOperation(3)">NOT (!)</button>
+
+    <div class="output" id="result"></div>
+</div>
+
+<script>
+
+function performOperation(choice) {
+
+    let output = document.getElementById("result");
+    output.innerHTML = "";
+
+    switch(choice) {
+
+        case 1:
+            let a = true;
+            let b = false;
+            let andResult = a && b;
+
+            output.innerHTML =
+                "<h3>AND Operator (&&)</h3>" +
+                "Value of A = " + a + "<br>" +
+                "Value of B = " + b + "<br>" +
+                "<strong>Result (A && B) = " + andResult + "</strong>";
+            break;
+
+        case 2:
+            let x = true;
+            let y = false;
+            let orResult = x || y;
+
+            output.innerHTML =
+                "<h3>OR Operator (||)</h3>" +
+                "Value of X = " + x + "<br>" +
+                "Value of Y = " + y + "<br>" +
+                "<strong>Result (X || Y) = " + orResult + "</strong>";
+            break;
+
+        case 3:
+            let p = true;
+            let notResult = !p;
+
+            output.innerHTML =
+                "<h3>NOT Operator (!)</h3>" +
+                "Value of P = " + p + "<br>" +
+                "<strong>Result (!P) = " + notResult + "</strong>";
+            break;
+
+        default:
+            output.innerHTML = "<p class='error'>Invalid Choice!</p>";
+    }
+}
+
+</script>
+
+</body>
+</html>
