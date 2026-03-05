@@ -1,0 +1,22 @@
+/**
+ * @param {Array} arr
+ * @param {number} n
+ * @return {Array}
+ */
+var flat = function (arr, n) {
+    
+    let result = [];
+
+    function flatten(current, depth) {
+        for (let item of current) {
+            if (Array.isArray(item) && depth < n) {
+                flatten(item, depth + 1);
+            } else {
+                result.push(item);
+            }
+        }
+    }
+
+    flatten(arr, 0);
+    return result;
+};
