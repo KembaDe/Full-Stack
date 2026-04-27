@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html ng-app="productivityApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Core Productivity Tools</title>
+    <!-- Note: Ensure your local angular.min.js path is correct or use CDN below -->
+    <script src="D:\msl ass2\1\angular.min.js"></script>
+    <style>
+        :root { --accent: #f43f5e; --bg: #0f172a; --card: #1e293b; --text: #ffffff; }
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Segoe UI', sans-serif; padding: 40px;
+            display: flex; flex-direction: column; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .focus-mode { opacity: 0.15; pointer-events: none; }
+        h1 { margin-bottom: 40px; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .grid { 
+            display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+            width: 100%; max-width: 1200px;
+        }
+        .card { 
+            background: var(--card); border-radius: 15px; padding: 25px;
+            width: 300px; min-height: 250px; border: 1px solid #334155;
+        }
+        h3 { margin-top: 0; color: var(--accent); }
+        p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+
+        .demo-area {
+            background: #111827; border-radius: 10px; padding: 15px;
+            text-align: center;
+        }
+        .btn { 
+            background: var(--accent); border: none; padding: 10px 15px;
+            border-radius: 6px; font-weight: bold; cursor: pointer; color: white; width: 100%;
+        }
+        textarea {
+            width: 90%; background: #0f172a; border: 1px solid #334155;
+            color: white; padding: 10px; border-radius: 5px; resize: none;
+        }
+        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; }
+    </style>
+</head>
+<body ng-controller="ToolController" ng-class="{'focus-mode': isFocusOn}">
+
+    <button class="btn" style="width: auto; position: fixed; top: 20px; right: 20px; z-index: 100;" 
+            ng-click="toggleFocus()">
+        {{isFocusOn ? 'EXIT FOCUS' : 'GO FOCUS MODE'}}
+    </button>
+
+    <h1> Angular js Directives DOM Manipulation</h1>
+
+    <div class="grid">
+        <!-- 1. Task Logic (Toggle State) -->
+        <div class="card">
+            <h3>Project Status</h3>
+            <p>Switch project phase between Development and Production.</p>
+            <div class="demo-area">
+                <button class="btn" ng-click="isProd = !isProd">
+                    Current: {{isProd ? 'PRODUCTION' : 'STAGING'}}
+                </button>
+                <div class="status-tag" ng-style="{'background': isProd ? '#10b981' : '#f59e0b'}">
+                    {{isProd ? 'Live Environment' : 'Sandbox Mode'}}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Calculation Logic (Live Length) -->
+        <div class="card">
+            <h3>Text Analytics</h3>
+            <p>Monitor character limits for social media posts or SMS.</p>
+            <div class="demo-area">
+                <textarea ng-model="noteText" placeholder="Start typing..."></textarea>
+                <div style="margin-top:10px">
+                    Chars: <span ng-style="{'color': noteText.length > 20 ? '#ef4444' : '#00ff88'}">
+                        {{noteText.length}} / 20
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Visibility Logic (Conditional List) -->
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <p>Display administrative tools based on user permissions.</p>
+            <div class="demo-area">
+                <button class="btn" ng-click="isAdmin = !isAdmin">
+                    View as: {{isAdmin ? 'Admin' : 'Guest'}}
+                </button>
+                <ul ng-show="isAdmin" style="list-style:none; padding:0; text-align:left; color:#10b981; font-size:0.9rem">
+                    <li>⚙️ System Settings</li>
+                    <li>📁 Database Logs</li>
+                    <li>🔑 Reset Credentials</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 4. Style Logic (Priority Highlighter) -->
+        <div class="card">
+            <h3>Task Priority</h3>
+            <p>Type "High", "Mid", or "Low" to see the priority branding.</p>
+            <div class="demo-area">
+                <input type="text" ng-model="priority" placeholder="Enter priority..." 
+                       style="width:80%; padding:8px; border-radius:4px; border:1px solid #334155; background:#0f172a; color:white;">
+                <div class="status-tag" ng-style="getPriorityStyle()">
+                    Priority: {{priority || 'None'}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        angular.module('productivityApp', [])
+        .controller('ToolController', function($scope) {
+            $scope.isProd = false;
+            $scope.noteText = "";
+            $scope.isAdmin = false;
+            $scope.priority = "";
+            $scope.isFocusOn = false;
+
+            $scope.toggleFocus = function() {
+                $scope.isFocusOn = !$scope.isFocusOn;
+                if($scope.isFocusOn) {
+                    setTimeout(() => { $scope.$apply(() => { $scope.isFocusOn = false; }); }, 3000);
+                }
+            };
+
+            $scope.getPriorityStyle = function() {
+                const p = $scope.priority.toLowerCase();
+                if (p === 'high') return { 'background': '#ef4444', 'color': 'white' };
+                if (p === 'mid') return { 'background': '#3b82f6', 'color': 'white' };
+                if (p === 'low') return { 'background': '#64748b', 'color': 'white' };
+                return { 'background': '#334155', 'color': '#94a3b8' };
+            };
+        });
+    </script>
+</body>
+</html>
