@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html ng-app="inventoryApp">
+<head>
+    <title>ProStock | Inventory Systems</title>
+    <!-- Keep your local path or use CDN -->
+    <script src="D:\msl ass2\1\angular.min.js"></script>
+    
+    <style>
+        :root { --primary: #0f172a; --accent: #3b82f6; --danger: #f43f5e; --bg: #f1f5f9; }
+        body { background: var(--bg); font-family: 'Inter', 'Segoe UI', sans-serif; margin: 0; padding: 40px; color: #334155; }
+        .wrapper { max-width: 1000px; margin: 0 auto; }
+        
+        .card { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { margin-top: 0; font-size: 1.25rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .input-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        
+        input, select { padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .btn-save { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s; }
+        .btn-save:hover { background: #1e293b; transform: translateY(-1px); }
+
+        .table-container { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; padding: 15px; font-size: 11px; text-transform: uppercase; color: #64748b; border-bottom: 2px solid #edf2f7; }
+        td { padding: 15px; border-top: 1px solid #f1f5f9; font-size: 14px; }
+        
+        /* Status Logic Styles */
+        .stock-critical { color: var(--danger); font-weight: bold; background: #fff1f2; padding: 4px 8px; border-radius: 4px; }
+        .stock-normal { color: #10b981; }
+        .category-tag { font-size: 11px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+    </style>
+</head>
+<body ng-controller="InventoryController">
+
+    <div class="wrapper">
+        <div class="card">
+            <h2>📦 Asset Procurement Entry</h2>
+            <div class="input-grid">
+                <input type="text" ng-model="newItem.name" placeholder="Item Name (e.g. MacBook Pro)">
+                <input type="number" ng-model="newItem.qty" placeholder="Quantity">
+                <input type="number" ng-model="newItem.unitPrice" placeholder="Unit Price ($)">
+            </div>
+            <div class="input-grid">
+                <select ng-model="newItem.category">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Software">Software</option>
+                    <option value="Furniture">Furniture</option>
+                </select>
+                <input type="text" ng-model="newItem.batch" placeholder="Batch ID">
+                <button class="btn-save" ng-click="addItem()">Log Asset</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table ng-if="inventory.length > 0">
+                <thead>
+                    <tr>
+                        <th>Asset Details</th>
+                        <th>Category</th>
+                        <th>Stock Level</th>
+                        <th>Unit Price</th>
+                        <th>Total Valuation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in inventory">
+                        <td>
+                            <strong>{{ item.name | uppercase }}</strong><br>
+                            <small style="color:#94a3b8">Batch: {{ item.batch || 'N/A' }}</small>
+                        </td>
+                        <td><span class="category-tag">{{ item.category }}</span></td>
+                        <td>
+                            <!-- Logic: Highlight if stock is less than 5 -->
+                            <span ng-class="item.qty < 5 ? 'stock-critical' : 'stock-normal'">
+                                {{ item.qty }} Units 
+                                <small ng-if="item.qty < 5">(REORDER)</small>
+                            </span>
+                        </td>
+                        <td>{{ item.unitPrice | currency }}</td>
+                        <td>{{ (item.qty * item.unitPrice) | currency }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="text-align: center; padding: 40px; color: #94a3b8;" ng-if="inventory.length === 0">
+                <p>Inventory database is currently empty.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('inventoryApp', []);
+
+        app.controller('InventoryController', function($scope) {
+            // Initial Data for demonstration
+            $scope.inventory = [
+                { name: 'Dell Monitor', qty: 12, unitPrice: 200, category: 'Hardware', batch: 'B-901' },
+                { name: 'Office Chair', qty: 3, unitPrice: 150, category: 'Furniture', batch: 'F-202' }
+            ];
+            
+            $scope.newItem = { category: "" };
+
+            $scope.addItem = function() {
+                if($scope.newItem.name && $scope.newItem.qty > 0) {
+                    // Business Logic: Push deep copy to array
+                    $scope.inventory.push(angular.copy($scope.newItem));
+                    
+                    // Reset Form
+                    $scope.newItem = { category: "" };
+                } else {
+                    alert("Please enter a valid Item Name and Quantity.");
+                }
+            };
+        });
+    </script>
+</body>
+</html>
