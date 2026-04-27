@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html ng-app="fitnessApp">
+<head>
+    <title>ActiveLife | Fitness Tracker</title>
+    <!-- Using local path as per your previous setup -->
+    <script src="D:\msl ass2\1\angular.min.js"></script>
+    <style>
+        :root { --brand: #0ea5e9; --burn: #f59e0b; --bg: #0f172a; --card: #1e293b; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding-top: 50px; }
+        
+        .main-container { background: #ffffff; width: 90%; max-width: 900px; padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        
+        .header-box { background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white; padding: 25px; border-radius: 18px; margin-bottom: 30px; text-align: left; }
+        
+        .log-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .log-form input, .log-form select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; color: #475569; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
+        
+        .btn-log { background: #0ea5e9; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-log:hover { background: #0284c7; transform: translateY(-2px); }
+        
+        .intensity-high { color: #ef4444; font-weight: bold; }
+        .intensity-low { color: #10b981; }
+    </style>
+</head>
+<body ng-controller="FitnessController as fit">
+
+    <div class="main-container">
+        
+        <!-- HEADER COMPONENT -->
+        <div class="header-box">
+            <h1 style="margin:0;">ActiveLife Dashboard</h1>
+            <p style="opacity:0.9;">Tracking metrics for: <strong>Personal Trainer Mode</strong></p>
+        </div>
+
+        <!-- ACTIVITY LOG FORM -->
+        <form class="log-form" ng-submit="fit.addActivity()">
+            <input type="text" ng-model="fit.newAct.title" placeholder="Activity (e.g. Running)" required>
+            <input type="number" ng-model="fit.newAct.duration" placeholder="Mins" required>
+            <select ng-model="fit.newAct.intensity" required>
+                <option value="" disabled selected>Intensity</option>
+                <option value="Low">Low</option>
+                <option value="Moderate">Moderate</option>
+                <option value="High">High</option>
+            </select>
+            <button type="submit" class="btn-log">Log Workout</button>
+        </form>
+
+        <!-- DATA VISUALIZATION TABLE -->
+        <div ng-if="fit.logs.length > 0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Workout Type</th>
+                        <th>Intensity Level</th>
+                        <th>Duration</th>
+                        <th>Est. Calories Burned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in fit.logs">
+                        <td><strong>{{ item.title | uppercase }}</strong></td>
+                        <td ng-class="item.intensity === 'High' ? 'intensity-high' : 'intensity-low'">
+                            {{ item.intensity }}
+                        </td>
+                        <td>{{ item.duration }} Minutes</td>
+                        <!-- Logic: 10 cals per min for high, 5 for others -->
+                        <td style="color: var(--burn); font-weight: bold;">
+                            {{ item | calculateCalories }} kcal
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div ng-if="fit.logs.length == 0" style="text-align:center; padding:40px; color:#94a3b8;">
+            <p>No activities logged today. Let's get moving!</p>
+        </div>
+
+    </div>
+
+    <script>
+        var app = angular.module('fitnessApp', []);
+
+        // CUSTOM FILTER: Logic to estimate calories based on intensity and duration
+        app.filter('calculateCalories', function() {
+            return function(activity) {
+                if (!activity) return 0;
+                var factor = (activity.intensity === 'High') ? 12 : (activity.intensity === 'Moderate' ? 8 : 5);
+                return activity.duration * factor;
+            };
+        });
+
+        // MAIN CONTROLLER
+        app.controller('FitnessController', function() {
+            var vm = this;
+            vm.logs = [
+                { title: 'Morning Yoga', duration: 30, intensity: 'Low' },
+                { title: 'Sprints', duration: 15, intensity: 'High' }
+            ];
+            vm.newAct = { intensity: "" };
+
+            vm.addActivity = function() {
+                // Add record to the array
+                vm.logs.push(angular.copy(vm.newAct));
+                // Clear input form
+                vm.newAct = { intensity: "" }; 
+            };
+        });
+    </script>
+</body>
+</html>
